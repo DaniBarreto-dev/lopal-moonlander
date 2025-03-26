@@ -23,21 +23,47 @@ let moduloLunar = {
     posicao:  {
         x: 100,
         y: 100
-    }  
+    },
+    angulo: 0,
+    largura: 20,
+    altura: 20,
+    cor: "black",
+     motorligado: false,
+     velocidade: {
+        x: 0,
+        y: 0
+     }
 }
 
 function desenharModuloLunar(){
     contexto.save();
     contexto.beginPath();
-    contexto.translate(100, 100);
-    contexto.rotate(0);
-    contexto.rect(10, 10, 20 , 20);
-    contexto.fillStyle = "black";
+    contexto.translate(moduloLunar.posicao.x, moduloLunar.posicao.y);
+    contexto.rotate(moduloLunar.angulo);
+    contexto.rect(moduloLunar.largura * -0.5, moduloLunar.altura * -0.5,
+        moduloLunar.largura, moduloLunar.altura);
+    contexto.fillStyle = moduloLunar.cor;
     contexto.fill();
-    contexto.closePath()
-    contexto.restore()
+    contexto.closePath();
+        if(moduloLunar.motorligado){
+            desenharChama();
+        }
+
+    contexto.restore();
 
 }
+
+    function desenharChama(){
+        contexto.beginPath();
+        contexto.moveTo(moduloLunar.largura * -0.5, moduloLunar.altura * 0.5);
+        contexto.lineTo(moduloLunar.largura * 0.5, moduloLunar.altura * 0.5);
+        //determine o tamanho da chama
+        contexto.lineTo(0, moduloLunar.altura * 0.5 + Math.random() * 10 );
+        contexto.lineTo(moduloLunar.largura * -0.5, moduloLunar.altura * 0.5);
+        contexto.closePath();
+        contexto.fillStyle = "orange"
+        contexto.fill();
+    }
 
 
 
@@ -65,10 +91,34 @@ contexto.rect(x, 100, 25, 10);
  contexto.fill();
  contexto.restore();
 
- x = x + 1
- requestAnimationFrame(desenhar)
- desenharModuloLunar()
+ x = x + 1;
+ atracaoGravitacional()
+ requestAnimationFrame(desenhar);
+ desenharModuloLunar();
 }
+document.addEventListener("keydown" , teclaPressionada);
+function teclaPressionada(evento){
+    if(evento.keyCode == 38){
+        moduloLunar.motorligado = true
+    }
 
+}
+document.addEventListener("keyup", teclaSolta);
+
+function teclaSolta(evento){
+    if(evento.keyCode == 38){
+        moduloLunar.motorligado = false
+    }
+}
+let gravidade = 0.1;
+function atracaoGravitacional(){
+    moduloLunar.posicao.x += moduloLunar.velocidade.x;
+    moduloLunar.posicao.y += moduloLunar.velocidade.y;
+    if(moduloLunar.motorligado){
+
+    moduloLunar.velocidade.y -= 0.2;
+}
+moduloLunar.velocidade.y += gravidade
+}
 desenhar()
 
