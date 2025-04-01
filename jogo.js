@@ -1,5 +1,5 @@
 // Moonlander;
-// Tiago Alves da Silva (https://github.com/DarkusStorm);
+// Daniel Barreto de Paula;
 // 28/03/25;
 // Versão 0.1.0.
 
