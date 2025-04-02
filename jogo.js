@@ -1,14 +1,13 @@
-// Moonlander;
-// Daniel Barreto de Paula;
-// 28/03/25;
-// Versão 0.1.0.
+//MoonLander. Um jogo de alunissagem.
+//Daniel barreto de paula
+//28/03/2025
+//Versão 0.1.0
 
 /** @type {HTMLCanvasElement} */
 
-// Modelagem de Dados:
+//Seção de Modelagem de dados
 let canvas = document.querySelector("#jogo");
 let contexto = canvas.getContext("2d");
-
 
 let moduloLunar = {
     posicao: {
@@ -24,106 +23,129 @@ let moduloLunar = {
         x: 0,
         y: 0
     },
-    combustível: 1000
+    combustivel: 1000
 }
 
-// Visualização:
-function desenharModuloLunar() {
+//Seção de visualização
+function desenharModuloLunar(){
     contexto.save();
-    // Salva o contexto atual, visto que será alterado deopis.
     contexto.beginPath();
     contexto.translate(moduloLunar.posicao.x, moduloLunar.posicao.y);
     contexto.rotate(moduloLunar.angulo);
-    contexto.rect(moduloLunar.largura * -0.5, moduloLunar.altura * -0.5, moduloLunar.largura, moduloLunar.altura);
+    contexto.rect(moduloLunar.largura * -0.5, moduloLunar.altura * -0.5,
+         moduloLunar.largura, moduloLunar.altura);
     contexto.fillStyle = moduloLunar.cor;
     contexto.fill();
     contexto.closePath();
 
-    if (moduloLunar.motorLigado && moduloLunar.combustível > 0) {
+    if(moduloLunar.motorLigado){
         desenharChama();
+        consumoCombustivel();
     }
-
+    
     contexto.restore();
-    // Restaura o contexto salvo.
 }
 
-function desenharChama() {
+function desenharChama(){
     contexto.beginPath();
     contexto.moveTo(moduloLunar.largura * -0.5, moduloLunar.altura * 0.5);
     contexto.lineTo(moduloLunar.largura * 0.5, moduloLunar.altura * 0.5);
-    // Determina o tamanho da chama.
-    contexto.lineTo(0, moduloLunar.altura * 0.5 + Math.random() * 10);
+    //Determina o tamanho da chama
+    contexto.lineTo(0, moduloLunar.altura * 0.5 + Math.random() * 35 );
     contexto.closePath();
     contexto.fillStyle = "orange";
     contexto.fill();
 }
 
-function mostrarVelocidade() {
+function mostrarVelocidade(){
     contexto.font = "bold 18px Arial";
     contexto.textAlign = "center";
     contexto.textBaseLine = "middle";
     contexto.fillStyle = "lightgray";
-    let velocidade = `Velocidade: ${(10 * moduloLunar.velocidade.y).toFixed(1)}`;
+    let velocidade = `Velocidade: ${(10 * moduloLunar.velocidade.y).toFixed(2)}`;
     contexto.fillText(velocidade, 100, 60);
 }
 
-function mostrarCombustível() {
-    contexto.font = "bold 18px Arial"
+function mostrarCombustivel(){
+    contexto.font = "bold 18px Arial";
     contexto.textAlign = "center";
     contexto.textBaseLine = "middle";
     contexto.fillStyle = "lightgray";
-    let combustível = `Combustível: ${(moduloLunar.combustível).toFixed(1)}`;
-    contexto.fillText(combustível, 100, 80);
+    let combustivel = `Combustível: ${(moduloLunar.combustivel).toFixed(0)}`;
+    contexto.fillText(combustivel, 100, 80);
 }
 
-function desenhar() {
-    // Limpa o que há na tela.
-    contexto.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Devem estar nessa ordem.
+function desenhar(){
+    //limpar a tela
+    contexto.clearRect(0, 0, canvas.width, canvas.height);
+    //Esta função atualiza a posição do módulo lunar em função da gravidade
+    
     atracaoGravitacional();
-    mostrarVelocidade();
-    mostrarCombustível();
     desenharModuloLunar();
-    // "RequestAnimationFrame" repete a execução da função "desenhar" a cada quadro.
-    if(moduloLunar.posicao.y >= (canvas.height - 0.5 * moduloLunar.altura)){
-        moduloLunar.posicao.y = 600;
-        return alert("O jogo acabou!");
-    }else{
-        return alert("Você conseguiu pousar")
+    mostrarVelocidade();
+    mostrarCombustivel();
+    //Esta função repete a execução da função desenhar a cada quadro
+    if(moduloLunar.posicao.y >= (canvas.height - 0.5 * moduloLunar.altura )){
+        
+        if(moduloLunar.velocidade.y >= 0.5){
+            return alert("Você morreu na queda!");
+        }else{
+            return alert("Você conseguiu pousar!")
+        }
     }
     requestAnimationFrame(desenhar);
 }
 
-// Seção de Controle:
 
-// O programa compreende como "motorLigado" quando a tecla para cima está pressionada.
+//Seção de controle
+
+
+//Pressionando a seta para cima para ligar o motor
 document.addEventListener("keydown", teclaPressionada);
-function teclaPressionada(evento) {
-    if (evento.keyCode == 38 && moduloLunar.combustível > 0) {
+function teclaPressionada(evento){
+    if(evento.keyCode == 38 && moduloLunar.combustivel > 0){
         moduloLunar.motorLigado = true;
+        
     }
+    if(evento.keyCode == 37){
+        //  Comando para girar no sentido anti horario
+    console.log("Seta para direita pressionada");
+
+    }else if(evento.keyCode == 39){
+        //Comando para gira
+        console.log("Seta para a esquerda pressionada");
+
+    }
+        
+    
 }
-// O programa compreende como "motorLigado = false" quando a tecla de seta para cima não está pressionada.
+//Soltando a seta para cima para desligar o motor
 document.addEventListener("keyup", teclaSolta);
-function teclaSolta(evento) {
-    if (evento.keyCode == 38) {
+function teclaSolta(evento){
+    if(evento.keyCode == 38){
         moduloLunar.motorLigado = false;
     }
 }
-let gravidade = 0.03;
-function atracaoGravitacional() {
-    moduloLunar.posicao.x += moduloLunar.velocidade.x;
-    moduloLunar.posicao.y += moduloLunar.velocidade.y;
-    if (moduloLunar.motorLigado) {
-        if (moduloLunar.combustível > 0) {
-            moduloLunar.velocidade.y -= 0.06
-            moduloLunar.combustível -= 1;
-        } else {
-            moduloLunar.combustível = 0;
-        }
+
+function consumoCombustivel(){
+    if(moduloLunar.combustivel > 0){
+        moduloLunar.combustivel--;
+    }else{
+        moduloLunar.combustivel = 0;
+        moduloLunar.motorLigado = false;
     }
-    moduloLunar.velocidade.y += gravidade;
 }
 
+let gravidade = 0.01;
+function atracaoGravitacional(){
+    moduloLunar.posicao.x += moduloLunar.velocidade.x;
+    moduloLunar.posicao.y += moduloLunar.velocidade.y;
+    if(moduloLunar.motorLigado){
+        moduloLunar.velocidade.y -= 0.0115;
+    }
+    moduloLunar.velocidade.y += gravidade;
+   
+    
+}
 desenhar();
