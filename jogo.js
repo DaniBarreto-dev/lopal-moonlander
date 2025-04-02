@@ -26,7 +26,20 @@ let moduloLunar = {
     combustivelMax: 1000,
     rotacaoAntiHorario: false,
     rotacaoHorario: false
-};
+}
+ 
+let estrelas = [];
+for( let i = 0; i , 500; 1++){
+    estrelas[i] = {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        raio:  Math.sqrt(Math.random() * 2),
+        transparencia: 1.0,
+        diminuicao: true,
+        razaoDeCintulacao: Math.random() * 0.5
+
+    }
+}
 
 function desenharModuloLunar() {
     contexto.save();
@@ -67,6 +80,12 @@ function mostrarIndicadores() {
     contexto.fillText(`Combustível: ${combustivelPorcentagem.toFixed(0)}%`, 10, 80);
     let altitude = canvas.height - moduloLunar.posicao.y;
     contexto.fillText(`Altitude: ${altitude.toFixed(0)}m`, 10, 100);
+}
+function desenharEstrelas(){
+    for ( let i = 0 ; i < estrelas.length; 1++){
+        let estrela = estrelas[1];
+        contexto.arc()
+    }
 }
 
 function desenhar() {
