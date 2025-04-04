@@ -1,9 +1,5 @@
-//moolander. um jogo de alunissagem
-//Daniel Barreto de Paula
-//versão 0.1.0
-
 /** @type {HTMLCanvasElement} */
-
+//Daniel Barreto de Paula
 // Seleção de modelagem de dados 
 let canvas = document.querySelector("#jogo");
 let contexto = canvas.getContext("2d");
@@ -25,20 +21,21 @@ let moduloLunar = {
     combustivel: 1000,
     combustivelMax: 1000,
     rotacaoAntiHorario: false,
-    rotacaoHorario: false
-}
- 
-let estrelas = [];
-for( let i = 0; i , 500; 1++){
-    estrelas[i] = {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        raio:  Math.sqrt(Math.random() * 2),
-        transparencia: 1.0,
-        diminuicao: true,
-        razaoDeCintulacao: Math.random() * 0.5
+    rotacaoHorario: false,
+    
+};
+let estrelas = []
 
-    }
+for(let i =0; i<100; i++){
+   estrelas[i] = {
+    x: Math.random()* canvas.width,
+    y: Math.random()* canvas.height,
+    raio: Math.sqrt( 2 * Math.random()),
+    brilho: 1.0,
+    apagando: true,
+    cintilacao: 0.05 * Math.random()
+    
+    };
 }
 
 function desenharModuloLunar() {
@@ -81,18 +78,40 @@ function mostrarIndicadores() {
     let altitude = canvas.height - moduloLunar.posicao.y;
     contexto.fillText(`Altitude: ${altitude.toFixed(0)}m`, 10, 100);
 }
-function desenharEstrelas(){
-    for ( let i = 0 ; i < estrelas.length; 1++){
-        let estrela = estrelas[1];
-        contexto.arc()
-    }
-}
 
+function DesenharEstrelas(){
+    contexto.save();
+    for(let i = 0; i < estrelas.length; i++ ){
+        let estrela = estrelas[i];
+        contexto.beginPath(); 
+        contexto.arc(estrela.x, estrela.y, estrela.raio, 0, 2 * Math.PI);
+        contexto.closePath();
+        contexto.fillStyle = `rgba(255, 255, 255, ${estrela.brilho } )`;
+        contexto.fill();
+
+        if(estrela.apagando){
+            estrela.brilho -= estrela.cintilacao;
+            if(estrela.brilho <= 0){
+                estrela.apagando = false;
+            }
+        
+        }else {
+            estrela.brilho += estrela.cintilacao;
+            if (estrela.brilho >= 1.0){
+                estrela.apagando = true;
+            }
+        }
+
+    }
+    contexto.restore();
+}
+    
 function desenhar() {
     contexto.clearRect(0, 0, canvas.width, canvas.height);
     mostrarIndicadores();
     atracaoGravitacional();
     desenharModuloLunar();
+    DesenharEstrelas();
 
     if (moduloLunar.posicao.y >= (canvas.height - 0.5 * moduloLunar.altura)) {
         if (moduloLunar.velocidade.y >= 0.5) {
@@ -100,7 +119,7 @@ function desenhar() {
             contexto.font = "bold 50px Fantasy";
             contexto.fillStyle = "red";
             contexto.textAlign = "center";
-            contexto.fillText("VOCÊ MORREU'!", canvas.width / 2, canvas.height / 2);
+            contexto.fillText("VOCÊ MORREU!", canvas.width / 2, canvas.height / 2);
         } else {
             alert("Você conseguiu pousar🐔!");
         }
@@ -156,5 +175,4 @@ function atracaoGravitacional() {
     
     moduloLunar.velocidade.y += gravidade;
 }
-
-desenhar();
+desenhar()
